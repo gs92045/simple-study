@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+	th:replace="template/fragment/header :: common_header(~{::title},~{::link})">
+<meta charset="UTF-8">
+<title>Test Page</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link/>
+</head>
+<body>
+	<div th:replace="~{template/fragment/header :: nav}">test</div>
+	<div class="container-sm" th:object="${board}">
+		<p th:text="*{title}">title</p>
+		<hr>
+		<div>
+			<textarea rows="20%" cols="170%" disabled th:text="*{contents}"></textarea>
+		</div>
+		<p th:text="*{userId}">title</p>
+	</div>
+	<div class="container">
+		<!-- 댓글 -->
+		<div th:replace="~{template/fragment/reply/replySave :: reply}"></div>
+		<hr>
+		<!-- 댓글 게시판 -->
+		<div th:replace="~{template/fragment/reply/replyList :: replyList}"></div>
+	</div>
+	
+	<div class="col-12">
+	<a href="#" th:href="@{/board/form/update/{boardSeq}(boardSeq=${board.boardSeq})}" type="button" class="btn btn-primary">수정하기</a>
+	<a href="#" th:href="@{/board/list}" type="button" class="btn btn-primary">목록으로</a>
+	<a href="#" th:href="@{/board/delete/{boardSeq}(boardSeq=${board.boardSeq})}" type="button" class="btn btn-primary">삭제하기</a>	
+	</div>
+	
+	<script>	
+	var form = document.getElementById('replyForm');
+	form.addEventListener('submit',function(event){
+		var headers = new Headers();
+		headers.set('Accept','appication/json');
+		
+		var formData = new FormData();
+		for(var i = 0;i<form.length;i++){
+			formData.append(form[i].name,form[i].value);
+		}
+		
+		
+		var url = '/reply/save';
+		var fetchOptions = {
+				method: 'POST',
+				headers,
+				body: formData
+		};
+		
+		var responsePromise = fetch(url,fetchOptions);
+		responsePromise
+		  .then(function(response){
+			  return response.json();
+		  })
+		  .then(function(jsonData){
+			 var list = document.getElementById('replyList');
+			 list.innerHTML += 
+				"<div><p>"
+					+jsonData.title
+						+"</p><p>"
+						+jsonData.contents
+						+"</p></div>";	
+				
+			 //JSON.stringify(jsonData);
+		  });
+		
+		event.preventDefault();
+	});
+	</script>
+	
+
+	
+</body>
+</html>

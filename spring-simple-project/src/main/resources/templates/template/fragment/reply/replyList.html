@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link/>
+<head>
+</head>
+<body>
+	<div id="replyList" th:fragment="replyList" class="container-sm sticky-md-top" th:object="${replyList}">
+		<div th:each="reply : ${replyList}">
+		<p th:text="${reply.title}"></p>
+		<p th:text="${reply.contents}"></p>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+	th:replace="template/fragment/header :: common_header(~{::title},~{::link})">
+<meta charset="UTF-8">
+<title>Test Page</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link />
+</head>
+<body>
+
+	<div th:replace="~{template/fragment/header :: nav}">test</div>
+	<div class="container-sm sticky-md-top">
+		<form class="row g-3" action="/board/save" th:object="${board}"
+			method="post">
+			<!-- 작성자 -->
+			<div class="col-12">
+				<label for="userId" class="form-label">User Id</label> <input
+					type="text" class="form-control" th:field="*{userId}">
+			</div>
+			<!-- 제목 -->
+			<div class="col-12">
+				<label for="title" class="form-label">Title</label> <input
+					type="text" class="form-control" th:field="*{title}"
+					placeholder="title is not null">
+			</div>
+			<!-- 글 내용 -->
+			<div class="form-floating">
+				<textarea class="form-control" placeholder="write contents"
+					id="floatingTextarea2" style="height: 50px" th:field="*{contents}"></textarea>
+				<label for="floatingTextarea2">Contents</label>
+			</div>
+			
+			<div class="col-12">
+				<button type="submit" class="btn btn-primary">registry</button>
+			</div>
+		</form>
+	</div>
+</body>
+</html>

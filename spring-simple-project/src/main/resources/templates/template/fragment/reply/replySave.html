@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link/>
+<head>
+</head>
+<body>
+	<div th:fragment="reply" class="container-sm sticky-md-top">
+		<form id="replyForm" th:object="${reply}" class="row g-3">
+			<input type="hidden" th:field="*{boardSeq}">
+			<!-- 제목 -->
+			<div class="col-12">
+				<label for="title" class="form-label">Title</label>
+				<input type="text" class="form-control" th:field="*{title}" placeholder="title is not null" >
+			</div>
+			<!-- 글 내용 -->
+			<div class="form-floating">
+				<textarea class="form-control" th:field="*{contents}" placeholder="write contents"></textarea>
+				<label for="${#ids.prev('contents')}">Contents</label>
+			</div>
+			
+			<div class="col-12">
+				<button type="submit" class="btn btn-primary">registry</button>
+			</div>
+		</form>
+	
+	</div>
+
+	
+</body>
+</html>

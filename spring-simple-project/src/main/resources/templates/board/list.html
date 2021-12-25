@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="template/fragment/header :: common_header(~{::title},~{::link})">
+<meta charset="UTF-8">
+<title>Test Page</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link/>
+<style>
+	.red { background-color: red;}
+</style>
+</head>
+<body>
+	<div th:replace="~{template/fragment/header :: nav}">test</div>
+	<div class="list-group container-sm sticky-md-top">
+		<div class="list-group-item list-group-item-success active" >
+			<h5 class="mb-1">Temp board</h5>
+		</div>
+		<div th:each="board : ${boards}">
+		<a th:href="@{/board/get/{boardSeq}(boardSeq=${board.boardSeq})}" href="#"class="list-group-item list-group-item-action" >
+			<div class="d-flex w-100 justify-content-between">
+				<h5 class="mb-1" th:text="${board.title}">board title</h5>
+				<small th:text="${board.boardSeq}">up_date</small>
+			</div>
+			<p class="mb-1">board contents preview</p>
+		</a>
+		</div>
+	</div>
+	<div class="list-group-item" style="">
+	<a href="#" th:href="@{/board/form/save}" type="button" class="btn btn-primary">등록하기</a>
+	</div>
+</body>
+</html>
