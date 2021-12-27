@@ -1,13 +1,12 @@
-package kr.co.spring.domain;
+package kr.co.spring.http.Form;
 
 import lombok.Data;
 
 @Data
 public class ReplySaveForm {
 	public int replySeq;
-	public String title;
 	public String contents;
-	//public String userId;
-	//public String userSeq;
+	public String userId;
+	public int userSeq;
 	public int boardSeq;
 }

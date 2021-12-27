@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.spring.domain.Reply;
-import kr.co.spring.domain.ReplySaveForm;
+import kr.co.spring.http.Form.ReplySaveForm;
+import kr.co.spring.http.Form.ReplyVO;
 import kr.co.spring.mybatis.mapper.ReplyMapper;
 
 @Repository
+@Transactional
 public class ReplyRepository {
 	@Autowired
 	private ReplyMapper mapper;
@@ -18,11 +21,11 @@ public class ReplyRepository {
 		mapper.save(parameter);
 	}
 	
-	public Reply getReply(int replySeq) {
+	public ReplyVO getReply(int replySeq) {
 		return mapper.getReply(replySeq);
 	}
 	
-	public List<Reply> list(int parameter) {
-		return mapper.list(parameter);
+	public List<ReplyVO> getList(int boardSeq) {
+		return mapper.getList(boardSeq);
 	}
 }

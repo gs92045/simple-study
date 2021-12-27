@@ -13,27 +13,34 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import kr.co.spring.domain.Reply;
-import kr.co.spring.domain.ReplySaveForm;
+import kr.co.spring.http.Form.ReplySaveForm;
+import kr.co.spring.http.Form.ReplyVO;
 
 @Mapper
 public interface ReplyMapper {
+	final String insert = "INSERT INTO REPLY";
+	final String select = "SELECT U.USER_ID, R.CONTENTS FROM USER U, REPLY R";
 	
-	@Insert("INSERT INTO REPLY (TITLE,CONTENTS,USER_SEQ,BOARD_SEQ)"
-			+ "VALUES (#{parameter.title},#{parameter.contents},1,#{parameter.boardSeq})")
+	
+	@Insert(insert
+			+" (CONTENTS, USER_SEQ, BOARD_SEQ, REG_DATE)"
+			+" VALUES"
+			+" (#{parameter.contents},#{parameter.userSeq},#{parameter.boardSeq},NOW())")
 	@Options(useGeneratedKeys = true, keyProperty = "replySeq")
 	void save(@Param("parameter") ReplySaveForm parameter);
 	
-	@Select("SELECT * FROM REPLY WHERE BOARD_SEQ=#{boardSeq}")
+	@Select(select 
+			+" WHERE R.BOARD_SEQ=#{boardSeq} AND U.USER_SEQ = R.USER_SEQ")
 	@ResultMap("ReplyMap")
-	List<Reply> list(@Param("boardSeq") int boardSeq);	
+	List<ReplyVO> getList(@Param("boardSeq") int boardSeq);	
 	
-	@Select("SELECT * FROM REPLY WHERE REPLY_SEQ = #{replySeq}")
+	//생성한 댓글만 따로 부를 때를위해 만들어둔 메소드(삭제예정)
+	@Select(select
+			+" WHERE REPLY_SEQ = #{replySeq}")
 	@Results(id = "ReplyMap", value = {
-			@Result(property="replySeq",column = "reply_seq"),
-			@Result(property="title",column="title"),
 			@Result(property="contents",column="contents"),
-			@Result(property="userSeq",column="user_seq"),
-			@Result(property="boardSeq",column="board_seq")
+			@Result(property="userId",column="user_id")
 	})
-	Reply getReply(@Param("replySeq")int replySeq);
+	ReplyVO getReply(@Param("replySeq")int replySeq);
+
 }

@@ -2,28 +2,32 @@ package kr.co.spring.mvc.service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import kr.co.spring.domain.Board;
-import kr.co.spring.domain.BoardSaveForm;
 import kr.co.spring.domain.BoardUpdateForm;
+import kr.co.spring.http.Form.BoardVO;
+import kr.co.spring.mvc.controller.BoardRegistryForm;
 import kr.co.spring.repository.BoardRepository;
 
 @Service
 public class BoardService {
+	Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	private BoardRepository repository;
 	
-	public Board get(int boardSeq) {
+	public BoardVO get(int boardSeq) {
 		return repository.get(boardSeq);
 	}
 	
-	public List<Board> getList(){
-		return repository.getList();
+	public List<BoardVO> getList(int offset,int limit){
+		return repository.getList(offset,limit);
 	}
 	
-	public void save(BoardSaveForm board) {
+	public void save(BoardRegistryForm board) {
+		logger.info("repo-save : {} ",board);
 		repository.save(board);
 	}
 	
