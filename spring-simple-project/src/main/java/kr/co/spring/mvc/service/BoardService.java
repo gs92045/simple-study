@@ -19,6 +19,7 @@ public class BoardService {
 	private BoardRepository repository;
 	
 	public BoardVO get(int boardSeq) {
+		this.addView(boardSeq);
 		return repository.get(boardSeq);
 	}
 	
@@ -40,6 +41,10 @@ public class BoardService {
 	}
 	
 	public void addComment(int boardSeq) {
+		repository.addComment(boardSeq);
+	}
+	
+	public void addView(int boardSeq) {
 		repository.addComment(boardSeq);
 	}
 }

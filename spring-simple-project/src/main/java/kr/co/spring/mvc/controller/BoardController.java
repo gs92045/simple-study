@@ -65,7 +65,7 @@ public class BoardController {
 		
 		//페이징 처리-기본 3개
 		int offset = (page-1) * 3;
-		int limit = 3 + offset;
+		int limit = 3;
 		int count = repository.getCount();
 		BoardPage boardPage = new BoardPage(page,count,offset,limit);
 		
@@ -111,13 +111,30 @@ public class BoardController {
 	}
 	
 	
+	//수정필요
+	@GetMapping("/updateForm/{boardSeq}")
+	public String updateForm(@PathVariable int boardSeq, Model model) {
+		BoardVO board = service.get(boardSeq);
+		BoardUpdateForm boardUpdateForm = new BoardUpdateForm();
+		
+		boardUpdateForm.setBoardSeq(boardSeq);
+		boardUpdateForm.setContents(board.getContents());
+		boardUpdateForm.setTitle(board.getTitle());
+		boardUpdateForm.setUserId(board.getUserId());
+		
+		model.addAttribute("boardUpdateForm",boardUpdateForm);
+		
+		return "/board/boardUpdatePage";
+	}
 	
 	
 	//수정필요
 	@PostMapping("/update")
-	public String update(@ModelAttribute("board") BoardUpdateForm board) {
-		int seq = board.getBoardSeq();
-		service.update(board);
+	public String update(@ModelAttribute("boardUpdateForm") BoardUpdateForm boardUpdateForm) {
+		int seq = boardUpdateForm.getBoardSeq();
+		
+		service.update(boardUpdateForm);
+		
 		String url = String.format("redirect:/board/get/%d", seq);
 		return url;
 	}

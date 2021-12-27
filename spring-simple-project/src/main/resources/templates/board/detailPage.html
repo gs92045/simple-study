@@ -48,9 +48,8 @@
                             <!-- Post title-->
                             <h1 class="fw-bolder mb-1" th:text="*{title}">title</h1>
                             <!-- Post meta content-->
-                            <div class="text-muted fst-italic mb-2" th:text="*{regDate}"></div>
-                            <div class="text-muted fst-italic mb-2" th:if="*{upDate} != null" 
-                            th:text="(updated) *{upDate}"></div>
+                            <div class="text-muted fst-italic mb-2" th:if="*{upDate} == null" th:text="*{regDate}"></div>
+                            <div class="text-muted fst-italic mb-2" th:unless="*{upDate} == null" th:text="'(updated)'+*{upDate}"></div>
                             
                             <!-- Post categories
                             <a class="badge bg-secondary text-decoration-none link-light" href="#!">Web Design</a>
@@ -102,6 +101,12 @@
                             </div>
                         </div>
                     </section>
+                    <div class="justify-content-center my-4">
+						<a href="#" th:href="@{/board/updateForm/{boardSeq}(boardSeq=${post.boardSeq})}" type="button" class="btn btn-primary">수정하기</a>
+					</div>
+                	<div class="justify-content-center my-4">
+						<a href="#" th:href="@{/board/delete/{boardSeq}(boardSeq=${post.boardSeq})}" type="button" class="btn btn-primary">삭제하기</a>
+					</div>
                 </div>
                 <!-- Side widgets-->
                 <div class="col-lg-4">

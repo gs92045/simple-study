@@ -90,7 +90,6 @@ public interface BoardMapper {
 	
 	//게시글 수정
 	@Update("UPDATE BOARD SET TITLE=#{parameter.title}, CONTENTS=#{parameter.contents},UP_DATE=NOW() WHERE BOARD_SEQ=#{parameter.boardSeq}")
-	@Options(useGeneratedKeys = true, keyProperty = "boardSeq")
 	void update(@Param("parameter") BoardUpdateForm board);
 	
 	//게시글 삭제

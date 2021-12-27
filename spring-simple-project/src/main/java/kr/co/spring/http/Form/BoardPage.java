@@ -23,11 +23,11 @@ public class BoardPage {
 	}
 	
 	private void calRange() {
-		int older = endPage = (count%3 == 0) ? count/3 : count/3 + 1;
 		int newer = 1;
+		endPage = (count%3 == 0) ? count/3 : count/3 + 1;
 		
-		prePage = (1 < current-1) ? (current-2) : newer; 
-		overPage = (current + 1 < (count/3+1) ) ? current + 1 : older;
+		prePage = (1 < current-2) ? (current-2) : newer; 
+		overPage = (current + 2 < endPage ) ? current + 2 : endPage;
 	}
 	
 	public Boolean isEqual(String str) {

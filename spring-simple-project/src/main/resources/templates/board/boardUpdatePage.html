@@ -41,20 +41,32 @@
         <div class="container">
             <div class="row">   
             	<!-- Blog entries-->
-                <div id="board" class="col-lg-8">	
-                	<div id="post" th:each="post : ${lists}">	
-                    	<a href="#" th:href='@{/board/get/{boardSeq}(boardSeq=${post.boardSeq})}' class="list-group-item list-group-item-action">
-                    		<!-- Featured blog post-->
-                    		<div> 
-                    			<div class="card-body">
-                    				<div class="small text-muted" th:text="${post.regDate}"></div>
-                        			<h2 class="card-title" th:text="${post.title}"></h2>
-                        			<p class="card-text">test preview</p>
-                    			</div>
-                   			</div>
-                   		</a>
-               		</div>
+                <div class="col-lg-8">
+                	<form th:object="${boardUpdateForm}" action="/board/update" method="post">
+                		<!-- boardSeq -->
+                		<input type="hidden" class="form-control" th:field="*{boardSeq}">
+  						
+                		<!-- title -->
+ 		 				<div class="form-group">
+    						<label for="title">제목</label>
+    						<input type="text" class="form-control" th:field="*{title}" placeholder="Title">
+  						</div>
+  						<!-- uesr Id(임시)  -->
+  						<div class="form-group">
+    						<label for="userId">글쓴이</label>
+    						<input type="text" class="form-control" th:field="*{userId}" placeholder="user-id" disabled>
+  						</div>
+  						<!-- contents -->
+  						<div class="form-group">
+    						<label for="contents">내용</label>
+    						<textarea class="form-control" th:field="*{contents}" rows="5" placeholder="contents"></textarea>
+  						</div>
+  						<div class="form-group">
+							<button type="submit" class="btn btn-primary">등록하기</button>
+						</div>
+					</form>
                 </div>
+                
                 <!-- Side widgets-->
                 <div class="col-lg-4">
                     <!-- Search widget-->
@@ -96,39 +108,6 @@
                     </div>
                 </div>
             </div>
-           
-            
-            <!-- Pagination-->
-            <nav aria-label="Pagination">
-            	<hr class="my-0" />
-            	<div class="justify-content-center my-4">
-					<a href="#" th:href="@{/board/registry}" type="button" class="btn btn-primary">등록하기</a>
-				</div>
-                <ul class="pagination justify-content-center my-4">
- 					          	
-                	<!-- 최근 게시글 링크  -->
-                	<li class="page-item" aria-current="page">
-                		<a class="page-link" th:href="@{/board/list/1}">Newer</a>
-                	</li>
-                    
-                    <li th:each="num : ${#numbers.sequence(page.prePage,page.overPage)}" class="page-item">  	
-                    	<a th:if="${page.current} == ${num}" class="page-link" th:text="${num}">1</a>
-                    	<a th:unless="${page.current} == ${num}" class="page-link" th:href="@{/board/list/{page}(page=${num})}" th:text="${num}">1</a>
-                    </li>
-                    
-                    <!-- 마지막 게시물 링크  -->
-                	<li class="page-item" aria-current="page">
-                		<a class="page-link" th:href="@{/board/list/{page}(page=${page.endPage})}">Older</a>
-                	</li>
-                    
-                    <!-- 클릭시 모달창? 따로 페이지를 입력받아? 링크주자 -->
-                    <!-- .... 가운데?.. -->
-               	</ul>
-               	
-          	</nav>
-          	
-          	
-          	
         </div>
         <!-- Footer-->
         <footer class="py-5 bg-dark">
@@ -136,16 +115,5 @@
         </footer>
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="/js/scripts.js"></script>
-        <script>
-        var board = document.getElementById('post');
-        if(board == null){
-        	board = document.getElementById('board');
-        	board.innerHTML += "게시글이 없습니다.";
-        }
-        
-        </script>
-        
     </body>
 </html>
