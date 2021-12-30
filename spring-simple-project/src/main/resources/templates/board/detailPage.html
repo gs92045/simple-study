@@ -75,26 +75,41 @@
                         <div class="card bg-light">
                             <div class="card-body">
                                 <!-- Comment form-->
-                                <form id="commentRegForm" class="mb-4" th:object="${commentRegForm}" method="post">
+                                <form id="commentRegForm" class="mb-4" th:object="${commentRegForm}">
                                 	<input type="hidden" th:field="*{boardSeq}">
-                                	
-                                	<textarea class="form-control" rows="3" 
+                                	<textarea class="form-control" rows="3"
                                 		placeholder="Join the discussion and leave a comment!"
                                 		th:field="*{contents}"></textarea>
-                                	<button type="submit">댓글달기</button>
+                                	<button type="submit" onClick="reply()">댓글달기</button>
                                 </form>
                                 
                                 <!-- Comment with nested comments-->
                                 <!-- 댓글 등록시에만 ajax를 이용해서 다시 로딩 -->
                                 <div id="commentSpace">
-                                	<div id="commentList" class="d-flex mb-4" th:each="comment : ${commentList}">
-                                 		<!-- user Image -->
-										<div class='flex-shrink-0'><img class='rounded-circle' src='https://dummyimage.com/50x50/ced4da/6c757d.jpg' alt='...' /></div>
-										<!-- comment contents -->
-              							<div class='ms-3'>
-											<!-- userId -->
-											<div class='fw-bold' th:text="${comment.userId}"></div>
-											<p th:text="${comment.contents}"></p>
+                                	<div id="test" class="d-flex mb-4" th:each="comment : ${commentList}">
+                                 		<div th:if="${comment.depth == 0}">
+                                 			<!-- user Image -->
+											<div class='flex-shrink-0'><img class='rounded-circle' src='https://dummyimage.com/50x50/ced4da/6c757d.jpg' alt='...' /></div>
+											<!-- comment contents -->
+              								<div class='ms-3' id='comment'>
+												<!-- userId -->
+												<div class='fw-bold' th:text="${comment.userId}"></div>
+												<p th:text="${comment.contents}"></p>	
+												<a id="text" class="btn btn-primary">답글하기</a>
+											</div>
+										</div>
+										<div th:unless="${comment.depth==0}"> 
+											<!-- child comment -->
+											<div class="d-flex mt-4">
+                                            	<div class="flex-shrink-0">
+                                            		<img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." />
+                                            	</div>
+                                            	<div id='comment'>
+                                                	<div class="fw-bold" th:text="${comment.userId}"></div>
+                                               	    <p th:text="${comment.contents}"></p>										
+                                                	<a class="btn btn-primary">답글하기</a>
+                                                </div>
+                                        	</div>
 										</div>
                                 	</div>
                                 </div>
@@ -108,6 +123,8 @@
 						<a href="#" th:href="@{/board/delete/{boardSeq}(boardSeq=${post.boardSeq})}" type="button" class="btn btn-primary">삭제하기</a>
 					</div>
                 </div>
+                
+			
                 <!-- Side widgets-->
                 <div class="col-lg-4">
                     <!-- Search widget-->
@@ -129,6 +146,15 @@
         <footer class="py-5 bg-dark">
             <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>
         </footer>
+        
+        <script>
+			$("a").click(function(event){
+			var parent = $(event.target);
+			console.log(parent.attr('id'));
+			});
+			
+		</script>	
+        
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->

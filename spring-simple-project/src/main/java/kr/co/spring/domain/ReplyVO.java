@@ -5,17 +5,17 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public class Reply {
+public class ReplyVO {
 	public int replySeq;
-	public int userSeq;
 	public int boardSeq;
 	
+	public String userSeq;
+	public String userId;
 	public String contents;
 	
 	public Date regDate;
 	public Date upDate;
-	public Date delDate;
-	
+
 	//´ë´ñ±Û ´Ù´Â ´ñ±Û¹øÈ£
 	public int parent;
 	public int depth;

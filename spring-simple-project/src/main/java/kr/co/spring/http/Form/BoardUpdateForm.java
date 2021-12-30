@@ -1,4 +1,4 @@
-package kr.co.spring.domain;
+package kr.co.spring.http.Form;
 
 import lombok.Data;
 

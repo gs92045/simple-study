@@ -6,10 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import kr.co.spring.domain.Board;
-import kr.co.spring.domain.BoardSaveForm;
-import kr.co.spring.domain.BoardUpdateForm;
-import kr.co.spring.http.Form.BoardVO;
-import kr.co.spring.mvc.controller.BoardRegistryForm;
+import kr.co.spring.domain.BoardVO;
+import kr.co.spring.http.Form.BoardRegistryForm;
+import kr.co.spring.http.Form.BoardUpdateForm;
 import kr.co.spring.mybatis.mapper.BoardMapper;
 
 @Repository
@@ -51,8 +50,8 @@ public class BoardRepository {
 		mapper.addComment(boardSeq);
 	}
 	
-	public void add(int boardSeq) {
-		mapper.addComment(boardSeq);
+	public void addView(int boardSeq) {
+		mapper.addView(boardSeq);
 	}
 	
 	

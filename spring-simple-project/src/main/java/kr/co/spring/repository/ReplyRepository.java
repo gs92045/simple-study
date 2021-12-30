@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.spring.domain.Reply;
+import kr.co.spring.domain.ReplyVO;
 import kr.co.spring.http.Form.ReplySaveForm;
-import kr.co.spring.http.Form.ReplyVO;
 import kr.co.spring.mybatis.mapper.ReplyMapper;
 
 @Repository
@@ -21,11 +21,15 @@ public class ReplyRepository {
 		mapper.save(parameter);
 	}
 	
-	public ReplyVO getReply(int replySeq) {
-		return mapper.getReply(replySeq);
-	}
-	
 	public List<ReplyVO> getList(int boardSeq) {
 		return mapper.getList(boardSeq);
+	}
+	
+	public void updateOrder(int boardSeq, int order) {
+		mapper.updateOrder(boardSeq, order);
+	}
+	
+	public int countReply(int boardSeq){
+		return mapper.countReply(boardSeq);
 	}
 }

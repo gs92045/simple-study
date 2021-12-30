@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import kr.co.spring.domain.BoardUpdateForm;
-import kr.co.spring.http.Form.BoardVO;
-import kr.co.spring.mvc.controller.BoardRegistryForm;
+import kr.co.spring.domain.BoardVO;
+import kr.co.spring.http.Form.BoardRegistryForm;
+import kr.co.spring.http.Form.BoardUpdateForm;
 import kr.co.spring.repository.BoardRepository;
 
 @Service
@@ -45,6 +45,7 @@ public class BoardService {
 	}
 	
 	public void addView(int boardSeq) {
-		repository.addComment(boardSeq);
+		repository.addView(boardSeq);
 	}
+
 }

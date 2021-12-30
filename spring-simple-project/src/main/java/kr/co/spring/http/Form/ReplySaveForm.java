@@ -5,8 +5,15 @@ import lombok.Data;
 @Data
 public class ReplySaveForm {
 	public int replySeq;
-	public String contents;
-	public String userId;
 	public int userSeq;
 	public int boardSeq;
+	
+	public String userId;
+	public String contents;
+	
+	public int parent;
+	public int depth;
+	public int order;	
 }
+
+

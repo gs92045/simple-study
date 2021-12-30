@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import kr.co.spring.domain.BoardUpdateForm;
+import kr.co.spring.domain.BoardVO;
+import kr.co.spring.domain.ReplyVO;
 import kr.co.spring.http.Form.BoardPage;
-import kr.co.spring.http.Form.BoardVO;
+import kr.co.spring.http.Form.BoardRegistryForm;
+import kr.co.spring.http.Form.BoardUpdateForm;
 import kr.co.spring.http.Form.ReplySaveForm;
-import kr.co.spring.http.Form.ReplyVO;
 import kr.co.spring.mvc.service.BoardService;
 import kr.co.spring.repository.BoardRepository;
 import kr.co.spring.repository.ReplyRepository;
@@ -37,6 +38,7 @@ public class BoardController {
 	private ReplyRepository replyRepository;
 	@Autowired
 	private UserRepository userRepository;
+	
 	private final Logger logger =LoggerFactory.getLogger(getClass());
 	
 	//게시물 등록하기 - 입력을 위한 폼전송객체 전달
@@ -47,13 +49,12 @@ public class BoardController {
 	}
 	
 	//게시물 등록하기 - db에 저장
+	//등록후 최신 리스트로 redirect
 	@PostMapping("/save")
 	public String save(@ModelAttribute("boardRegistryForm") BoardRegistryForm parameter , Model model) {
 		int userSeq = userRepository.userGetById(parameter.getUserId());
 		parameter.setUserSeq(userSeq);
-		logger.info("boardController-save : {} {}",parameter,userSeq);
 		service.save(parameter);
-		
 		return "redirect:/board/list/1";
 	}
 	
@@ -64,15 +65,18 @@ public class BoardController {
 		List<BoardVO> lists = new ArrayList<BoardVO>();
 		
 		//페이징 처리-기본 3개
+		//컨트롤러단이 아닌 서비스단에서 만들어주거나
+		//공통 페이징 처리를 만들도록하자
 		int offset = (page-1) * 3;
 		int limit = 3;
 		int count = repository.getCount();
 		BoardPage boardPage = new BoardPage(page,count,offset,limit);
 		
-		logger.info("boardController-list : {} .. {}",boardPage,lists);
 		lists.addAll(service.getList(offset,limit));
 		
+		//게시글 리스트객체 전달
 		model.addAttribute("lists",lists);
+		//페이징 갯수 전달
 		model.addAttribute("page",boardPage);
 		return "/board/MainPage";
 	}
@@ -82,6 +86,8 @@ public class BoardController {
 	 *	- 댓글 리스트
 	 *  - 댓글 작성
 	 *  - (미구현) 회원 로그인
+	 *  리팩토링 필요
+	 *  기능이 여러개가 있으며 이는 분리를 해줘야한다.
 	 */
 	@GetMapping("/get/{boardSeq}")
 	public String get(@PathVariable int boardSeq, Model model) throws ParseException {
@@ -90,19 +96,20 @@ public class BoardController {
 		String toReg = transFormat.format(transFormat.parse(board.getRegDate()));
 		board.setRegDate(toReg);
 		
+		//수정된 게시판인지 체크
 		if(board.getUpDate() != null) {
 			String toUp = transFormat.format(transFormat.parse(board.getUpDate()));
 			board.setUpDate(toUp);
 		}
 		
+		//해당 게시글에 댓글을 등록하기 위한 객체
 		ReplySaveForm reply = new ReplySaveForm();
 		reply.setBoardSeq(board.getBoardSeq());
-		logger.info("test board : {}",board);		
 		
+		//해당 게시글에 등록돼있는 댓글 리스트 불러오기
 		if(board.getComments() != 0) {
 			List<ReplyVO> replyList = replyRepository.getList(boardSeq);
 			model.addAttribute("commentList",replyList);
-			logger.info("list : {} ",replyList);
 		}
 		
 		model.addAttribute("post",board);
@@ -111,7 +118,7 @@ public class BoardController {
 	}
 	
 	
-	//수정필요
+	//게시글 수정 폼
 	@GetMapping("/updateForm/{boardSeq}")
 	public String updateForm(@PathVariable int boardSeq, Model model) {
 		BoardVO board = service.get(boardSeq);
@@ -128,7 +135,7 @@ public class BoardController {
 	}
 	
 	
-	//수정필요
+	//수정된 게시글 등록
 	@PostMapping("/update")
 	public String update(@ModelAttribute("boardUpdateForm") BoardUpdateForm boardUpdateForm) {
 		int seq = boardUpdateForm.getBoardSeq();
@@ -139,7 +146,7 @@ public class BoardController {
 		return url;
 	}
 	
-	//수정필요
+	//게시글 삭제
 	@GetMapping("/delete/{boardSeq}")
 	public String delete(@PathVariable int boardSeq) {
 		service.delete(boardSeq);
