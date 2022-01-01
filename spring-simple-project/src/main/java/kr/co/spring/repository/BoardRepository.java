@@ -18,7 +18,6 @@ public class BoardRepository {
 	private BoardMapper mapper;
 	
 	public BoardVO get(int boardSeq) {
-		
 		return mapper.get(boardSeq);
 	}
 	
@@ -58,7 +57,4 @@ public class BoardRepository {
 	public int getCount() {
 		return mapper.getCount();
 	}
-	
-	
-	
 }

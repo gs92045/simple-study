@@ -7,44 +7,62 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import kr.co.spring.domain.ReplyVO;
-import kr.co.spring.http.Form.ReplySaveForm;
+import kr.co.spring.domain.ReplyDto;
+import kr.co.spring.repository.BoardRepository;
 import kr.co.spring.repository.ReplyRepository;
+import kr.co.spring.repository.UserRepository;
 
 @Service
 public class ReplyService {
 	@Autowired
 	private ReplyRepository repository;
+	@Autowired
+	private BoardRepository boardRepository;
+	@Autowired
+	private UserRepository userRepository;
+	
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 	
-	//parent reply save
-	//댓글 등록
-	public void prSave(ReplySaveForm parameter) {
-		int boardSeq = parameter.getBoardSeq();
-		int order = repository.countReply(boardSeq);
-		
-		//댓글 추가 - 게시판에 등록된 댓굴 수 + 1 
-		parameter.setOrder(order+1);
-		repository.save(parameter);
-	}
 	
-	//child reply save
-	//대댓글 등록
-	public void crSave(ReplySaveForm parameter) {
-		/*
-		 * 부모 댓글 다음 순서로 온다
-		 * 최신 대댓글이 이전 대댓글보다 먼저 오도록한다
-		 */
-		int cOrder = parameter.getOrder();
-		
-		//대댓글이 들어갈 순서에서부터 +1
-		repository.updateOrder(parameter.getBoardSeq(),cOrder);	
-		repository.save(parameter);
-	}
-	
-		
-	public List<ReplyVO> getList(int boardSeq){
+	public List<ReplyDto> getList(int boardSeq){
 		return repository.getList(boardSeq);
 	}
+	
+	
+	public void save(ReplyDto parameter) {
+		ReplyDto reply = parameter; 
+		int boardSeq = reply.boardSeq;
+		
+		int userSeq = userRepository.userGetById(parameter.getUserId());
+			
+		parameter.setUserSeq(userSeq);
+		
+		
+		
+		//댓글이면 0, 답글이면 0이 아닌 수를 반환
+		//답글은 order와 parent,depth가 함께 넘어오기때문에 1값을 더해준다
+		//댓글은 최신 것이 오름차순
+		//답글은 최신 것은 내림차순 
+		if(reply.getParent() != 0) {
+			reply.setOrder(reply.getOrder()+1);
+			reply.setDepth(reply.getDepth()+1);
+			repository.updateOrder(boardSeq, reply.getOrder());
+		}
+		else {
+			int order = repository.countReply(reply.boardSeq);
+			reply.setOrder(order);
+		}
+		
+		logger.info("replyService : {} ",parameter);
+		
+		//해당 게시글의 댓글 수 증가
+		boardRepository.addComment(boardSeq);
+		repository.save(reply);
+	}
+	
+	
+	
+	
+	
 }

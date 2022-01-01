@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import kr.co.spring.domain.BoardVO;
-import kr.co.spring.domain.ReplyVO;
+import kr.co.spring.domain.ReplyDto;
 import kr.co.spring.http.Form.BoardPage;
 import kr.co.spring.http.Form.BoardRegistryForm;
 import kr.co.spring.http.Form.BoardUpdateForm;
-import kr.co.spring.http.Form.ReplySaveForm;
 import kr.co.spring.mvc.service.BoardService;
 import kr.co.spring.repository.BoardRepository;
 import kr.co.spring.repository.ReplyRepository;
@@ -103,17 +102,23 @@ public class BoardController {
 		}
 		
 		//해당 게시글에 댓글을 등록하기 위한 객체
-		ReplySaveForm reply = new ReplySaveForm();
-		reply.setBoardSeq(board.getBoardSeq());
+		ReplyDto parent = new ReplyDto();
+		parent.setBoardSeq(board.getBoardSeq());
+		
+		ReplyDto child = new ReplyDto();
+		child.setBoardSeq(board.getBoardSeq());
+				
 		
 		//해당 게시글에 등록돼있는 댓글 리스트 불러오기
 		if(board.getComments() != 0) {
-			List<ReplyVO> replyList = replyRepository.getList(boardSeq);
+			List<ReplyDto> replyList = replyRepository.getList(boardSeq);
 			model.addAttribute("commentList",replyList);
 		}
 		
 		model.addAttribute("post",board);
-		model.addAttribute("commentRegForm",reply);
+		model.addAttribute("replySave",parent);
+		
+		
 		return "/board/detailPage";
 	}
 	
@@ -152,4 +157,6 @@ public class BoardController {
 		service.delete(boardSeq);
 		return "redirect:/board/list/1";
 	}
+	
+
 }	

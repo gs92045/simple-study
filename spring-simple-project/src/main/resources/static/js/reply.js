@@ -1,44 +1,27 @@
-
-
-/* var form = document.getElementById("commentRegForm");
-
-form.addEventListener('submit', (event) => {
-	//var headers = new Headers();
-	//headers.set('Accept', 'appication/json');
-
-	var commentRegForm = new FormData();
-	for (var i = 0; i < form.length; i++) {
-		commentRegForm.append(form[i].name, form[i].value);
-	}
+var replyForm = function(data){	
 	
-	var url = '/reply/save';
-	var fetchOptions = {
-		method: 'post',
-		body: commentRegForm
-	};
-	
-	var responsePromise = fetch(url,fetchOptions);
-		responsePromise
-		 .then(function(fragment){
-		 		console.log(fragment);
-				var listSpace = document.getElementById('test');
-		  		listSpace.replaceWith(fragment);	
-			});		
-
-	event.preventDefault();
-}); */
+	var flag = document.getElementById(data).style.display;
+ 	if(flag=='none'){
+        document.getElementById(data).style.display='block';
+    } else if(flag == 'block'){
+        document.getElementById(data).style.display='none';
+    } 
+}
 
 
-function reply(){
 
-var form = $("#commentRegForm").serialize();
+var reply = function (data){
+var form = $('#'+data);
 
- $.ajax({
+$.ajax({
         url: "/reply/save",
-        data: form,
+        data: form.serialize(),
         type:"POST",
+        success : function(){
+        	alert(data);
+        }
     }).done(function (fragment) {
         $("#commentSpace").replaceWith(fragment);
-    });
+ });
 }
 

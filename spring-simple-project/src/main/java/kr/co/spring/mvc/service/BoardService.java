@@ -47,5 +47,9 @@ public class BoardService {
 	public void addView(int boardSeq) {
 		repository.addView(boardSeq);
 	}
+	
+	public List<BoardVO> getSearch(String keyword) {
+		return repository.getSearch(keyword);
+	}
 
 }

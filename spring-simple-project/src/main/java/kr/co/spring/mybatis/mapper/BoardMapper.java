@@ -60,6 +60,8 @@ public interface BoardMapper {
 	@ResultMap("BoardMap")
 	List<BoardVO> getSearch(@Param("keyword") String keyword);
 
+	
+	
 	//(수정필요) user id로 작성한 게시글 검색
 	@Select(select
 			+ " WHERE B.DEL_DATE IS NULL"
