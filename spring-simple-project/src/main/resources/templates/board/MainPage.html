@@ -14,37 +14,20 @@
     </head>
     <body>
         <!-- Responsive navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="#!">Start Bootstrap</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">Contact</a></li>
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Blog</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+       <div th:replace="template/fragment/header :: new-nav"></div>
         <!-- Page header with logo and tagline-->
-        <header class="py-5 bg-light border-bottom mb-4">
-            <div class="container">
-                <div class="text-center my-5">
-                    <h1 class="fw-bolder">Welcome to Home!</h1>
-                    <p class="lead mb-0">A Bootstrap 5 starter layout for your next blog homepage</p>
-                </div>
-            </div>
-        </header>
+       <div th:replace="template/fragment/header :: new-header"></div>
+       
+      
         <!-- Page content-->
         <div class="container">
+        	<div th:text="${keyword}"></div>
             <div class="row">   
             	<!-- Blog entries-->
                 <div id="board" class="col-lg-8">	
                 	<div id="post" th:each="post : ${lists}">	
                     	<a href="#" th:href='@{/board/get/{boardSeq}(boardSeq=${post.boardSeq})}' class="list-group-item list-group-item-action">
-                    		<!-- Featured blog post-->
+                    		
                     		<div> 
                     			<div class="card-body">
                     				<div class="small text-muted" th:text="${post.regDate}"></div>
@@ -55,18 +38,14 @@
                    		</a>
                		</div>
                 </div>
+                
+                
                 <!-- Side widgets-->
                 <div class="col-lg-4">
                     <!-- Search widget-->
-                    <div class="card mb-4">
-                        <div class="card-header">Search</div>
-                        <div class="card-body">
-                            <div class="input-group">
-                                <input class="form-control" type="text" placeholder="Enter search term..." aria-label="Enter search term..." aria-describedby="button-search" />
-                                <button class="btn btn-primary" id="button-search" type="button">Go!</button>
-                            </div>
-                        </div>
-                    </div>
+                    <div th:replace="template/fragment/header :: search-widget"></div>
+                   
+                    
                     <!-- Categories widget-->
                     <div class="card mb-4">
                         <div class="card-header">Categories</div>
@@ -89,6 +68,8 @@
                             </div>
                         </div>
                     </div>
+                    
+                    
                     <!-- Side widget-->
                     <div class="card mb-4">
                         <div class="card-header">Side Widget</div>
@@ -107,31 +88,24 @@
                 <ul class="pagination justify-content-center my-4">
  					          	
                 	<!-- 최근 게시글 링크  -->
-                	<li class="page-item" aria-current="page">
-                		<a class="page-link" th:href="@{/board/list/1}">Newer</a>
-                	</li>
-                    
-                    <li th:each="num : ${#numbers.sequence(page.prePage,page.overPage)}" class="page-item">
-                    	
-                    	<a th:if="${page.current} == ${num}" class="page-link" th:text="${num}">1</a>
-                    	<a th:unless="${page.current} == ${num}" class="page-link" th:href="@{/board/list/{page}(page=${num})}" th:text="${num}"  >1</a>
-                   
+                	<li th:if="${page.prePage} > 1" class="page-item" aria-current="page">
+                		<a class="page-link" th:if="${#strings.isEmpty(keyword)}" th:href="@{/board/list/1}">Newer</a>
+                		<a th:unless="${#strings.isEmpty(keyword)}" class="page-link" th:href="@{/board/list/1?keyword={keyword}(keyword=${keyword})}"> Newer </a>
                     </li>
                     
-                    <!-- 최근 게시글 링크  -->
-                	<li class="page-item" aria-current="page">
-                		<a class="page-link" th:href="@{/board/list/{page}(page=${page.endPage})}">Older</a>
-                	</li>
+                    <li th:each="num : ${#numbers.sequence(page.prePage,page.overPage)}" class="page-item">  	
+                		<a th:if="${#strings.isEmpty(keyword)}" class="page-link" th:href="@{/board/list/{page}(page=${num})}" th:text="${num}">2..3..4..</a>
+                		<a th:unless="${#strings.isEmpty(keyword)}" class="page-link" th:href="@{/board/list/{page}?keyword={keyword}(page=${num},keyword=${keyword})}" th:text="${num}">2..3..4..</a>
+                    </li>
                     
-                    <!-- 클릭시 모달창? 따로 페이지를 입력받아? 링크주자 -->
-                    <!-- .... 가운데?.. -->
-               	</ul>
-               	
+                    <!-- 마지막 게시물 링크  -->
+                	<li th:if="${page.overPage} < ${page.endPage}" class="page-item" aria-current="page">
+                		<a th:if="${#strings.isEmpty(keyword)}" class="page-link" th:href="@{/board/list/{page}(page=${page.endPage})}">Older</a>
+                		<a th:unless="${#strings.isEmpty(keyword)}" class="page-link" th:href="@{/board/list/{page}?keyword={keyword}(page=${page.endPage},keyword=${keyword})}">Older</a>
+                	</li>
+                </ul>
           	</nav>
-          	
-          	
-          	
-        </div>
+         </div>
         <!-- Footer-->
         <footer class="py-5 bg-dark">
             <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>

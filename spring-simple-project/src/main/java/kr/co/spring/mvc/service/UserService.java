@@ -5,6 +5,13 @@ import org.springframework.stereotype.Service;
 
 import kr.co.spring.repository.UserRepository;
 
+/**
+ * User service
+ * 아직 큰 관련 기능 x
+ * @author kodin
+ *
+ */
+
 @Service
 public class UserService {
 	@Autowired

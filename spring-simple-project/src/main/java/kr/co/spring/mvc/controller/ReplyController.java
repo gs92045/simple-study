@@ -1,27 +1,31 @@
 package kr.co.spring.mvc.controller;
 
+
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.google.gson.Gson;
-
-import kr.co.spring.domain.Reply;
-import kr.co.spring.http.Form.ReplySaveForm;
-import kr.co.spring.http.Form.ReplyVO;
-import kr.co.spring.mvc.service.BoardService;
+import kr.co.spring.domain.ReplyDto;
 import kr.co.spring.mvc.service.ReplyService;
-import kr.co.spring.mvc.service.UserService;
+
+/**
+ * 댓글 관련 컨트롤러
+ * 
+ *  댓글이 많은경우 비동기 통신에서 바로 갱신되지않는? 버그가 있었는데
+ *  해당 이슈를 처리하기 위해서 페이징 처리가 필요
+ * 
+ * @author kodin
+ *
+ */
 
 @Controller
 @RequestMapping("/reply")
@@ -29,37 +33,24 @@ public class ReplyController {
 	Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
-	private Gson gson;
-	@Autowired
 	private ReplyService service;
-	@Autowired
-	private BoardService boardService;
-	@Autowired
-	private UserService userService;
 	
-	
-	@ResponseStatus(HttpStatus.OK)
 	@PostMapping("/save")
-	@ResponseBody
-	public String save(@ModelAttribute("commentRegForm") ReplySaveForm parameter) {
-		if(parameter.getUserId() == null) {
-			parameter.setUserId("test1");
-		}
-		int userSeq = userService.userGetById(parameter.getUserId());
-		parameter.setUserSeq(userSeq);
-		
-		//댓글을 저장 후 해당 댓글 번호 반환(저장)
-		service.save(parameter);
-		//댓글을 단 게시판의 번호
-		logger.info("reply : {}",parameter);
-		
+	public String save(@ModelAttribute("replySave") ReplyDto reply,Model model) {
+	
+		ReplyDto parameter = reply;
 		int boardSeq = parameter.getBoardSeq();
-		//게시판의 댓글 수 추가
-		boardService.addComment(boardSeq);
+		int offset = 0;
+		int limit = service.countReply(boardSeq);
+		
+		//댓글 또는 답글 저장
+		service.save(parameter);
 		
 		//댓글 등록 후 새로 등록된 댓글 리스트를 반환
-		List<ReplyVO> recent = service.getList(boardSeq);
+		List<ReplyDto> recent = service.getList(boardSeq,offset,limit);
 		
-		return gson.toJson(recent);
-	}
+		model.addAttribute("commentList",recent);
+		return "/board/detailPage :: #commentSpace";
+	}	
+		
 }

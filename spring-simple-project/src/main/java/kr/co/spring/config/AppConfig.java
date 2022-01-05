@@ -3,6 +3,7 @@ package kr.co.spring.config;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import com.google.gson.Gson;
@@ -17,6 +18,4 @@ public class AppConfig {
 		Gson gson = builder.create();
 		return gson;
 	}
-	
-	
 }
