@@ -99,20 +99,20 @@
 
 
 	<!-- Search widget-->
-	<div th:fragment="side-widget" class="card mb-4">
+	<div th:fragment="search-widget" class="card mb-4">
 		<div class="card-header">Search</div>
 		<div class="card-body">
-			<div class="input-group">
-				<input class="form-control" type="text" id="keyword"
+			<form class="input-group" action="/board/list/1" method="get">
+				<input class="form-control" type="text" id="keyword" name="keyword"
 					placeholder="Enter search term..."
 					aria-label="Enter search term..." aria-describedby="button-search" />
-				<a class="btn btn-primary" id="button-search" type="button" th:href="@{/board/search}">Search</a>
-			</div>
+				<button class="btn btn-primary" id="button-search" type="submit" >Search</button>
+			</form>
 		</div>
 	</div>
 
+<script>
 
-
-
+</script>
 </body>
 </html>

@@ -8,6 +8,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.spring.mvc.service.UserService;
 
+/**
+ * user 관련 컨트롤러
+ *   api에 대한 지식을 좀 더 보완 후 회원 기능과 함께 수정
+ * @author kodin
+ *
+ */
+
+
 @RestController
 @RequestMapping("/user")
 public class UserController {

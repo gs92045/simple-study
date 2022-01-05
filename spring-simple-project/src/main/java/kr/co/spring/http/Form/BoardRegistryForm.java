@@ -2,6 +2,13 @@ package kr.co.spring.http.Form;
 
 import lombok.Data;
 
+/**
+ * 게시글 등록 폼 전송객체
+ * 
+ * @author kodin
+ *
+ */
+
 @Data
 public class BoardRegistryForm {
 	public int BoardSeq;

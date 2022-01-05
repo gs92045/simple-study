@@ -49,16 +49,20 @@ public interface BoardMapper {
 	 * @return
 	 */
 	@Select({"<script>",
-			"SELECT B.BOARD_SEQ, B.TITLE, B.CONTENTS, U.USER_ID, B.REG_DATE, B.UP_DATE, B.COMMENTS FROM BOARD B, USER U ",
+			"SELECT B.BOARD_SEQ,U.USER_ID, B.REG_DATE, B.UP_DATE,B.TITLE, B.CONTENTS, B.COMMENTS FROM BOARD B, USER U ",
 			"<where>",
+			"B.DEL_DATE IS NULL ",
+			"AND B.USER_SEQ = U.USER_SEQ ",
 			"<if test='#{keyword} != null'>",
-			"AND B.TITLE LIKE CONCAT('%',#{keyword},'%')",
+			"AND B.TITLE LIKE CONCAT('%',#{keyword},'%') ",
 			"</if>",
 			"</where>",
+			"ORDER BY B.REG_DATE DESC ",
+			"LIMIT #{offset},${limit} ",
 			"</script>"
 	})
 	@ResultMap("BoardMap")
-	List<BoardVO> getSearch(@Param("keyword") String keyword);
+	List<BoardVO> getSearch(@Param("keyword") String keyword,@Param("offset") int offset, @Param("limit") int limit);
 
 	
 	
@@ -106,6 +110,16 @@ public interface BoardMapper {
 	void addView(@Param("boardSeq") int boardSeq);
 	
 	//게시글 갯수 조회
-	@Select("SELECT COUNT(*) FROM BOARD WHERE DEL_DATE IS NULL")
-	int getCount();
+	//@Select("SELECT COUNT(*) FROM BOARD WHERE DEL_DATE IS NULL")
+	@Select({"<script>",
+		"SELECT COUNT(*) FROM BOARD ",
+		"<where>",
+		"DEL_DATE IS NULL ",
+		"<if test='#{keyword} != null'>",
+		"AND TITLE LIKE CONCAT('%',#{keyword},'%') ",
+		"</if>",
+		"</where>",
+		"</script>"
+	})
+	int getCount(@Param("keyword") String keyword);
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.spring.domain.Board;
 import kr.co.spring.domain.BoardVO;
@@ -11,7 +12,15 @@ import kr.co.spring.http.Form.BoardRegistryForm;
 import kr.co.spring.http.Form.BoardUpdateForm;
 import kr.co.spring.mybatis.mapper.BoardMapper;
 
+/**
+ * 게시글 Repository
+ * Controller, Service와 동일?
+ * @author kodin
+ *
+ */
+
 @Repository
+@Transactional
 public class BoardRepository {
 	
 	@Autowired
@@ -21,8 +30,8 @@ public class BoardRepository {
 		return mapper.get(boardSeq);
 	}
 	
-	public List<BoardVO> getSearch(String keyword) {
-		return mapper.getSearch(keyword);
+	public List<BoardVO> getSearch(String keyword, int offset, int limit) {
+		return mapper.getSearch(keyword,offset,limit);
 	}
 	
 	public BoardVO getById(String userId) {
@@ -53,8 +62,7 @@ public class BoardRepository {
 		mapper.addView(boardSeq);
 	}
 	
-	
-	public int getCount() {
-		return mapper.getCount();
+	public int getCount(String keyword) {
+		return mapper.getCount(keyword);
 	}
 }

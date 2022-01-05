@@ -56,9 +56,12 @@ public interface ReplyMapper {
 			+ " AND U.USER_SEQ = R.USER_SEQ"
 			+ " AND R.DEL_DATE IS NULL"
 			+ " ORDER BY R.REPLY_ORDER"
+			+ " LIMIT #{offset} , #{limit}"
 	)
 	@ResultMap("ReplyDto")
-	List<ReplyDto> getList(@Param("boardSeq") int boardSeq);
+	List<ReplyDto> getList(@Param("boardSeq") int boardSeq,
+			@Param("offset") int offset,
+			@Param("limit") int limit);
 	
 	
 	@Update("UPDATE REPLY"
