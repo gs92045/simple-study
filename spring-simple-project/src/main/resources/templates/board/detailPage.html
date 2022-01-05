@@ -14,22 +14,10 @@
     </head>
     <body>
         <!-- Responsive navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="#!">Start Bootstrap</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">Contact</a></li>
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Blog</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <div class="d-flex" id="wrapper">
-         
+        <div th:replace="template/fragment/header :: new-nav"></div>
+        
+   
+        <div class="d-flex" id="wrapper"> 
          <!-- Sidebar-->
          <div class="border-end bg-white" id="sidebar-wrapper">
          	<div class="list-group list-group-flush">
@@ -49,78 +37,143 @@
                             <h1 class="fw-bolder mb-1" th:text="*{title}">title</h1>
                             <!-- Post meta content-->
                             <div class="text-muted fst-italic mb-2" th:if="*{upDate} == null" th:text="*{regDate}"></div>
-                            <div class="text-muted fst-italic mb-2" th:unless="*{upDate} == null" th:text="'(updated)'+*{upDate}"></div>
-                            
-                            <!-- Post categories
-                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">Web Design</a>
-                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">Freebies</a>
-                        	-->
+                            <div class="text-muted fst-italic mb-2" th:unless="*{upDate} == null" th:text="'(updated)'+*{upDate}"></div>       
                         </header>
-                        <!-- 썸네일 db만들때  
-                         
-                        Preview image figure
-                        
-                        <figure class="mb-4"><img class="img-fluid rounded" src="https://dummyimage.com/900x400/ced4da/6c757d.jpg" alt="..." /></figure>
-                        
-                        -->
-                        
                         <!-- Board content-->
                         <section class="mb-5">
-                            <p class="fs-5 mb-4" th:text="${post.contents}">Contents</p>
+                            <p class="fs-5 mb-4" th:text="*{contents}">Contents</p>
                         </section>
                     </article>
                     
                     <!-- Comments section-->
                     <section class="mb-5">
                         <div class="card bg-light">
-                            <div class="card-body">
-                                <!-- Comment form-->
-                                <form id="commentRegForm" class="mb-4" th:object="${commentRegForm}" method="post">
-                                	<input type="hidden" th:field="*{boardSeq}">
+                           	<div class="card-body">
+                                	<!-- 댓글 폼-->
+                                	<form id="parent" class="mb-4" th:object="${replySave}">
+                                		<input type="hidden" th:field="*{boardSeq}">
+                                		<input type="hidden" th:field="*{parent}">
+                                		<input type="hidden" th:field="*{depth}">
+                                		<div class="row">
+                                		<div class="col-9 text-start">	
+                                			User Id : <input type="text" th:field="*{userId}">
+                                		</div> 
+                                		<div class="col-3">
+                                			<button type="submit" onclick="reply('parent')"> 등록하기 </button>
+                                		</div>
+                                		<br>
+                                		</div>
+                                		Contents : <textarea class="form-control" th:field="*{contents}" rows="3" placeholder="Join the discussion and leave a comment!"></textarea>
+                                	</form>
                                 	
-                                	<textarea class="form-control" rows="3" 
-                                		placeholder="Join the discussion and leave a comment!"
-                                		th:field="*{contents}"></textarea>
-                                	<button type="submit">댓글달기</button>
-                                </form>
-                                
-                                <!-- Comment with nested comments-->
-                                <!-- 댓글 등록시에만 ajax를 이용해서 다시 로딩 -->
-                                <div id="commentSpace">
-                                	<div id="commentList" class="d-flex mb-4" th:each="comment : ${commentList}">
-                                 		<!-- user Image -->
-										<div class='flex-shrink-0'><img class='rounded-circle' src='https://dummyimage.com/50x50/ced4da/6c757d.jpg' alt='...' /></div>
-										<!-- comment contents -->
-              							<div class='ms-3'>
-											<!-- userId -->
-											<div class='fw-bold' th:text="${comment.userId}"></div>
-											<p th:text="${comment.contents}"></p>
-										</div>
-                                	</div>
+                                	<!--  댓글 리스트 -->
+                                	<div id="commentSpace" class="container" th:each="comment : ${commentList}">
+										
+										<!-- 부모댓글 -->                               	
+                                		<div class="d-flex mt-4" th:if="${comment.depth}==0">
+                             	    	<div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                               			<div class="ms-3 flex-grow-1">
+                                    		<div class="row">
+                                            	<div class="fw-bold text-start" th:text="${comment.userId}">Commenter Name</div>
+                                            	<div class="d-flex row">
+                                                	<div class="flex-grow-1 text-start col" >
+                                                    	<small th:if="${comment.upDate}==null" th:text="${comment.regDate}">2021-12-12 03:11:12</small> 
+                                                		<small th:unless="${comment.upDate}==null" th:text="(upadted) ${comment.upDate}">2021-12-12 03:11:12</small> 
+                                                	</div>
+                                                	<div class="flex-shirink-1 text-end col">
+                                                    	<button type="button" class="btn" th:data="${comment.replySeq}" onclick="replyForm(this.getAttribute('data'))">답글</button>
+                                                	</div>
+                                                	           
+                                            	</div>
+                                        	</div>
+                                        	<hr class="mt-0">
+                                   			<div>
+                                   				<pre th:text="${comment.contents}">contest space</pre>
+                                    		</div>
+                                    		</div> 	     	
+                                		</div>
+                                	
+                                		<!-- 자식 댓글 -->	
+                                    	<div class="d-flex mt-4" th:if="${comment.depth}==1" style='margin-left: 50px'>
+                                		<div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                    	<div class="ms-3 flex-grow-1" >
+                                    		<div class="row">
+                                            	<div class="fw-bold text-start" th:text="${comment.userId}">Commenter Name</div>
+                                            	<div class="d-flex">
+                                                	<div class="flex-grow-1 text-start">
+                                                    	<small th:if="${comment.upDate}==null" th:text="${comment.regDate}">2021-12-12 03:11:12</small> 
+                                                		<small th:unless="${comment.upDate}==null" th:text="(upadted) ${comment.upDate}">2021-12-12 03:11:12</small> 
+                                                	</div>
+                                                	<div class="flex-grow-1 text-end">
+                                                    	<button type="button" class="btn" th:data="${comment.replySeq}" onclick="replyForm(this.getAttribute('data'))">답글</button>
+                                                	</div>           
+                                            	</div>
+                                        	</div>
+                                        	<hr class="mt-0">
+                                   			<div>
+                                   				<pre th:text="${comment.contents}">contest space</pre>
+                                    		</div>
+                                    	</div> 
+                                    	</div>
+                                    	
+                                    	<!-- 손자 댓글 -->
+                                    	<div class="d-flex mt-4" th:if="${comment.depth}>=2" style='margin-left: 100px'>
+                                		<div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                    	<div class="ms-3 flex-grow-1" th:id="${comment.userSeq}">
+                                    		<div class="row">
+                                            	<div class="fw-bold text-start" th:text="${comment.userId}">Commenter Name</div>
+                                            	<div class="d-flex">
+                                                	<div class="flex-grow-1 text-start">
+                                                    	<small th:if="${comment.upDate}==null" th:text="${comment.regDate}">2021-12-12 03:11:12</small> 
+                                                		<small th:unless="${comment.upDate}==null" th:text="(upadted) ${comment.upDate}">2021-12-12 03:11:12</small> 
+                                                	</div>
+                                                	<div class="flex-grow-1 text-end">
+                                                    	<button type="button" class="btn" th:data="${comment.replySeq}" onclick="replyForm(this.getAttribute('data'))">답글</button>
+                                                	</div>           
+                                            	</div>
+                                        	</div>
+                                        	<hr class="mt-0">
+                                   			<div>
+                                   				<pre th:text="${comment.contents}">contest space</pre>
+                                    		</div>
+                                    	</div> 
+                                    	</div>
+                                    	
+                                    	<!-- 답글 폼 -->  
+                                    	<div th:id="${comment.replySeq}" style="display : none">                             
+                                     		<form th:id="child+${comment.replySeq}" class="mb-4" th:object="${replySave}">
+                                				<input type="hidden" th:value="${comment.boardSeq}" id="boardSeq" name="boardSeq" >
+                                				<input type="hidden" th:value="${comment.replySeq}" id="parent" name="parent" >
+                                				<input type="hidden" th:value="${comment.depth}" id="depth" name="depth" >	
+                                				<input type="hidden" th:value="${comment.order}" id="order" name="order">	
+                                				<div class="row">
+                                					<div class="col-9 text-start">	
+                                						User Id : <input type="text" th:field="*{userId}">
+                                				</div> 
+                                				<div class="col-3">
+                                					<button type="submit" th:data="child+${comment.replySeq}" onclick="reply(this.getAttribute('data'))"> 등록하기 </button>
+                                				</div>
+                                				<br>
+                                				</div>
+                                				Contents : <textarea class="form-control" th:field="*{contents}" rows="3" placeholder="Join the discussion and leave a comment!"></textarea>
+                                			</form>
+                                		</div>
+                                   	</div>
                                 </div>
-                            </div>
-                        </div>
-                    </section>
-                    <div class="justify-content-center my-4">
-						<a href="#" th:href="@{/board/updateForm/{boardSeq}(boardSeq=${post.boardSeq})}" type="button" class="btn btn-primary">수정하기</a>
-					</div>
-                	<div class="justify-content-center my-4">
-						<a href="#" th:href="@{/board/delete/{boardSeq}(boardSeq=${post.boardSeq})}" type="button" class="btn btn-primary">삭제하기</a>
+                            </div>   
+                     </section>
+                
+                <div class="row d-flex my-4">
+						<div class="col">
+							<a href="#" th:href="@{/board/updateForm/{boardSeq}(boardSeq=${post.boardSeq})}" type="button" class="btn btn-primary">수정하기</a>
+							<a href="#" th:href="@{/board/delete/{boardSeq}(boardSeq=${post.boardSeq})}" type="button" class="btn btn-primary">삭제하기</a>
+						</div>
 					</div>
                 </div>
+                
+			
                 <!-- Side widgets-->
-                <div class="col-lg-4">
-                    <!-- Search widget-->
-                    <div class="card mb-4">
-                        <div class="card-header">Search</div>
-                        <div class="card-body">
-                            <div class="input-group">
-                                <input class="form-control" type="text" placeholder="Enter search term..." aria-label="Enter search term..." aria-describedby="button-search" />
-                                <button class="btn btn-primary" id="button-search" type="button">Go!</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div th:insert="/template/fragment/header ::search-widget" class="col-lg-4"> </div>
                 
             </div>
          </div>
@@ -129,6 +182,9 @@
         <footer class="py-5 bg-dark">
             <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>
         </footer>
+        
+ 
+        
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
